@@ -1,6 +1,17 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bill Split Receipt Scanner
 
-## Getting Started
+A premium, fast, and modern web application built to make splitting receipts among friends completely painless. Built with **Next.js**, styled with **Tailwind CSS**, and rigorously tested with **Jest**.
+
+## ✨ Features
+
+- **Interactive Table Interface:** Easily view your receipt items, their prices, and who is paying for them.
+- **Dynamic Split Calculations:** Assign multiple friends to a single item and the app will instantly calculate the exact breakdown of who owes what in the Split Summary.
+- **Smart Tag Management:** A built-in "Add All" feature detects everyone already in the receipt to save you from typing names repeatedly.
+- **Draggable Columns:** Adjust the width of the Item, Price, and Who columns dynamically just by clicking and dragging their borders.
+- **Real-Time Math:** Grand Totals and Split Breakdowns update immediately as you add, edit, or delete items.
+- **Sleek Aesthetics:** Built using modern glassmorphism styling, clean typography, and a fully responsive layout with native Dark Mode support.
+
+## 🚀 Getting Started
 
 First, run the development server:
 
@@ -14,23 +25,26 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000/bill-split-receipt-scanner](http://localhost:3000/bill-split-receipt-scanner) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+*(Note: Because this project is configured for GitHub Pages, it runs on the `/bill-split-receipt-scanner` subpath locally as well).*
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🧪 Testing
 
-## Learn More
+This project uses **Jest** and **React Testing Library** to ensure all mathematical calculations and UI interactions are robust.
 
-To learn more about Next.js, take a look at the following resources:
+To run the test suite:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run test
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+To run tests in watch mode during development:
 
-## Deploy on Vercel
+```bash
+npm run test:watch
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📦 Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The app is fully configured for static export to **GitHub Pages**. Any pushes to the `main` branch will automatically trigger the `.github/workflows/deploy.yml` GitHub Action, which builds and deploys the production bundle.
