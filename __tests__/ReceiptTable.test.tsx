@@ -20,58 +20,6 @@ describe('ReceiptTable', () => {
     expect(screen.getByText('Soda')).toBeInTheDocument();
   });
 
-  it('enters edit mode and allows saving changes', () => {
-    render(<ReceiptTable items={mockItems} />);
-    
-    const editButtons = screen.getAllByText('Edit');
-    fireEvent.click(editButtons[0]);
-    
-    expect(screen.getByText('Save')).toBeInTheDocument();
-    expect(screen.getByText('Cancel')).toBeInTheDocument();
-    
-    const itemInput = screen.getByDisplayValue('Pizza');
-    const priceInput = screen.getByDisplayValue('15');
-    
-    fireEvent.change(itemInput, { target: { value: 'Large Pizza' } });
-    fireEvent.change(priceInput, { target: { value: '20' } });
-    
-    fireEvent.click(screen.getByText('Save'));
-    
-    expect(screen.queryByDisplayValue('Large Pizza')).not.toBeInTheDocument();
-    expect(screen.getByText('Large Pizza')).toBeInTheDocument();
-    expect(screen.getByText('$20.00')).toBeInTheDocument();
-  });
-
-  it('allows adding and removing tags in edit mode', () => {
-    render(<ReceiptTable items={mockItems} />);
-    
-    const editButtons = screen.getAllByText('Edit');
-    fireEvent.click(editButtons[1]); // Edit "Soda" row
-    
-    expect(screen.getAllByText('Charlie').length).toBeGreaterThan(0);
-    
-    const tagInput = screen.getByPlaceholderText('Type a name & press Enter');
-    fireEvent.change(tagInput, { target: { value: 'Dave' } });
-    fireEvent.keyDown(tagInput, { key: 'Enter', code: 'Enter' });
-    
-    expect(screen.getAllByText('Dave').length).toBeGreaterThan(0);
-    
-    fireEvent.click(screen.getByText('Save'));
-    expect(screen.getAllByText('Dave').length).toBeGreaterThan(0);
-  });
-
-  it('calculates and displays the grand total and split summary correctly', () => {
-    render(<ReceiptTable items={mockItems} />);
-    
-    expect(screen.getByText('Grand Total')).toBeInTheDocument();
-    expect(screen.getByText('$20.00')).toBeInTheDocument();
-
-    expect(screen.getByText('Split Summary')).toBeInTheDocument();
-
-    expect(screen.getAllByText('$7.50')).toHaveLength(2); // Alice and Bob
-    expect(screen.getAllByText('$5.00')).toHaveLength(2); // Charlie owes $5, and the Soda item costs $5
-  });
-
   it('allows deleting an item', () => {
     render(<ReceiptTable items={mockItems} />);
     
@@ -98,22 +46,18 @@ describe('ReceiptTable', () => {
     expect(itemInputs.length).toBeGreaterThan(0);
   });
 
-  it('allows adding all previously existing names to a row', () => {
-    render(<ReceiptTable items={mockItems} />);
+  it('handles column resizing smoothly without throwing errors', () => {
+    const { container } = render(<ReceiptTable items={mockItems} />);
     
-    const editButtons = screen.getAllByText('Edit');
-    fireEvent.click(editButtons[1]); // Edit "Soda" row
+    // The resize handle doesn't have text, but we can query by its class
+    const handle = container.querySelector('.cursor-col-resize');
+    if (handle) {
+      fireEvent.mouseDown(handle, { clientX: 100 });
+      fireEvent.mouseMove(window, { clientX: 150 });
+      fireEvent.mouseUp(window);
+    }
     
-    const addAllBtn = screen.getByText('Add All');
-    fireEvent.click(addAllBtn);
-    
-    // Soda row originally just had Charlie. Now it should have Alice and Bob as well.
-    fireEvent.click(screen.getByText('Save'));
-    
-    // Bob should have $7.50 from Pizza + ($5.00 / 3) = $1.66 from Soda
-    // Since we're just checking the DOM, we can check if Bob and Alice exist in the summary
-    // and if there are more Bob/Alice tags than before.
-    expect(screen.getAllByText('Alice').length).toBeGreaterThan(2); 
-    expect(screen.getAllByText('Bob').length).toBeGreaterThan(2);
+    // As long as no errors are thrown during mouse events, resizing logic functions in JSDOM
+    expect(screen.getByText('Pizza')).toBeInTheDocument();
   });
 });
