@@ -15,6 +15,30 @@ interface ReceiptTableProps {
 export default function ReceiptTable({ items }: ReceiptTableProps) {
   const [tableItems, setTableItems] = useState<ReceiptItem[]>(items);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Load state from local storage on mount
+  useEffect(() => {
+    setIsMounted(true);
+    const saved = localStorage.getItem('receiptScannerItems');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setTableItems(parsed);
+        }
+      } catch (e) {
+        console.error("Failed to parse local storage data", e);
+      }
+    }
+  }, []);
+
+  // Save state to local storage whenever items change
+  useEffect(() => {
+    if (isMounted) {
+      localStorage.setItem('receiptScannerItems', JSON.stringify(tableItems));
+    }
+  }, [tableItems, isMounted]);
 
   // Column resizing state (Item, Price, Who, Actions)
   const [colWidths, setColWidths] = useState([35, 15, 35, 15]);
@@ -116,6 +140,11 @@ export default function ReceiptTable({ items }: ReceiptTableProps) {
   }, [tableItems]);
 
   const grandTotal = tableItems.reduce((acc, item) => acc + item.price, 0);
+
+  // Prevent hydration mismatch by not rendering the table until client-side hydration is complete
+  if (!isMounted) {
+    return <div className="w-full max-w-5xl mx-auto my-8 min-h-[400px]"></div>;
+  }
 
   return (
     <div className="w-full max-w-5xl mx-auto my-8 space-y-8">

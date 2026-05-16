@@ -7,6 +7,10 @@ const mockItems: ReceiptItem[] = [
 ];
 
 describe('ReceiptTable', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
   it('renders the initial items correctly', () => {
     render(<ReceiptTable items={mockItems} />);
     expect(screen.getByText('Pizza')).toBeInTheDocument();
